@@ -1,9 +1,10 @@
 ##################################
 # A pipeline for ONT_dRNA_seq written by Chen X.F
 ##################################
-EXA={"S1R1","S1R2","S2R1","S2R2"}
-ref="RGF"
-fast5="fast"
+#EXA={"S1R1","S1R2","S2R1","S2R2"}
+#ref="RGF"
+#fast5="fast"
+configfile: "config.yaml"
 #################################
 rule all:
     input:
