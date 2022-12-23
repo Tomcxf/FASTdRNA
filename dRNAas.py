@@ -1,13 +1,13 @@
 ##################################
 # A pipeline for ONT_dRNA_seq written by Chen X.F
 ##################################
-C1R1="C1R1"
-C1R2="C1R2"
-C2R1="C2R1"
-C2R2="C2R2"
+#S1R1="S1R1"
+#S1R2="S1R2"
+#S2R1="S2R1"
+#S2R2="S2R2"
 
-ref="RGF"
-
+#ref="RGF"
+configfile: "config.yaml"
 
 #################################
 
@@ -31,8 +31,8 @@ rule generateEvents2:
 
 rule joinFilesCond1:
     input:
-        {C1R1},
-        {C1R2}
+        {S1R1},
+        {S1R2}
     output:
         "AlternativeSplicing/localAS/Condition1"
     shell：
@@ -40,8 +40,8 @@ rule joinFilesCond1:
 
 rule joinFilesCond1:
     input:
-        {C2R1},
-        {C2R2}
+        {S2R1},
+        {S2R2}
     output:
         "AlternativeSplicing/localAS/Condition2"
     shell：
