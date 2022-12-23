@@ -1,0 +1,4 @@
+EXA = "the name of project"
+cfgfile = "cfg file for basecall"
+ref="the transcriptome reference file"
+fast5="location of fast5 file"
