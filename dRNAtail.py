@@ -1,8 +1,9 @@
 ##################################
 # A pipeline for ONT_dRNA_seq written by Chen X.F
 ##################################
-ref="analysis/RGF"
-EXA = "XXX"
+#ref="analysis/RGF"
+#EXA = "XXX"
+configfile: "config.yaml"
 ##################################
 rule all:
     input:
