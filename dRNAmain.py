@@ -1,10 +1,11 @@
 ##################################
 # A pipeline for ONT_dRNA_seq written by Chen X.F
 ##################################
-EXA = "XXX"
-cfgfile = "CCC"
-ref="RGF"
-fast5="fast"
+#EXA = "XXX"
+#cfgfile = "CCC"
+#ref="RGF"
+#fast5="fast"
+configfile: "config.yaml"
 #################################
 rule all :
     input:  
