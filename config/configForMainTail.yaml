@@ -1,0 +1,4 @@
+EXA: "WT-1"
+cfgfile: /opt/ont/guppy/data/rna_r9.4.1_70bps_fast.cfg
+ref: /work/cxf/paper/WT-1/transcriptome.fa
+fast5: /work/cxf/paper/WT-1/rawfast5/
