@@ -1,2 +1,46 @@
-# FASTdRNA
-FASTdRNA is a workflow for analysis of ONT direct RNA seq dataset
+# FastdRNA: a workflow for analysis of ONT direct RNA seq dataset
+FastdRNA is a pipeline written in snakemake to handle ONT direct RNA seq database. 
+
+The analysis includes : 
+- dRNAmain: a module for basecalling. mapping and transcript count.
+- dRNAtail: a module for RNA poly(A) length estimate.
+- dRNAmodif: a module for RNA modification detection.
+- dRNAas: a module for alternative splicing analysis.
+
+## Installation
+Users need to install snakemake and conda before.
+
+Then you can download the workflow by:
+```
+git clone https://github.com/Tomcxf/FASTdRNA.git
+```
+
+Required software and relative dependence can be installed through conda by typing
+
+```
+conda env create -f environment.yml
+```
+
+There're two software need to install in binary file.
+
+- [a branch of nanopolish suitable for slow5](https://github.com/jts/nanopolish/files/9256504/nanopolish.tar.gz)
+
+- [f5c](https://github.com/hasindu2008/f5c/releases/download/v1.1/f5c-v1.1-binaries.tar.gz)
+
+Finally, for the reason that copyright protection, we can't supply Guppy directly. Searcher should download Guppy in Nanopore Comm
+
+## Usage
+
+```
+ snakemake -s {dRNAmain.py / dRNAtail.py / dRNAmodif.py / dRNAas.py}
+           -s the snakemake file you want to run
+           --cores / -c : the number of cores to use (necessary)
+           --set-threads myrule=XXX set threads XXX for running
+```
+
+### tips
+To generate a officall report by snakemake, users can run
+```
+snakemake --report report.html
+```
+after pipeline finished.
