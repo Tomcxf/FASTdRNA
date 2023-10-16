@@ -1,4 +1,6 @@
 # FastdRNA: a workflow for analysis of ONT direct RNA seq dataset
+![未标题-1](https://github.com/Tomcxf/FASTdRNA/assets/75790226/c04de3be-20d2-4b82-ae8f-243f7a9ead9e)
+
 FastdRNA is a pipeline written in snakemake to handle ONT direct RNA seq database. 
 
 The analysis includes : 
