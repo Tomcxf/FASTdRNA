@@ -10,10 +10,10 @@
 configfile: "config.yaml"
 
 #################################
-rule all:
-"AlternativeSplicing/localAS/Condition1",
-"AlternativeSplicing/localAS/Condition2"
-
+rule all :
+    input:  
+        "AlternativeSplicing/localAS/Condition1",
+        "AlternativeSplicing/localAS/Condition2"
 
 rule generateEvents:
     input:
