@@ -31,28 +31,28 @@ rule generateEvents2:
     shell：
         "awk 'FNR==1 && NR!=1 { while (/^<header>/) getline; } 1 {print}' {input}/*.ioe > output[0]"
 
-rule joinFilesCond1:
-    input:
-        {S1R1}
+#rule joinFilesCond1:
+#    input:
+        #{S1R1}
         #{S1R2}
-    output:
-        "AlternativeSplicing/localAS/Condition1"
-    shell：
-        "suppa.py joinFiles -f tpm -i {input[0]} {input[1]} -o {output}"
+#    output:
+#        "AlternativeSplicing/localAS/Condition1"
+#    shell：
+#        "suppa.py joinFiles -f tpm -i {input[0]} {input[1]} -o {output}"
 
-rule joinFilesCond1:
-    input:
-        {S2R1}
-        #{S2R2}
-    output:
-        "AlternativeSplicing/localAS/Condition2"
-    shell：
-        "suppa.py joinFiles -f tpm -i {input[0]} {input[1]} -o {output}"
+#rule joinFilesCond1:
+#    input:
+#        {S2R1}
+#        {S2R2}
+#    output:
+#        "AlternativeSplicing/localAS/Condition2"
+#    shell：
+#        "suppa.py joinFiles -f tpm -i {input[0]} {input[1]} -o {output}"
 
 rule PSI_Con1:
     input:
         "AlternativeSplicing/localAS/allevents.ioe",
-        "AlternativeSplicing/localAS/Condition1"
+        {S1R1}
     output:
         "AlternativeSplicing/localAS/Condition1"
     shell：
@@ -61,7 +61,7 @@ rule PSI_Con1:
 rule PSI_Con2:
     input:
         "AlternativeSplicing/localAS/allevents.ioe",
-        "AlternativeSplicing/localAS/Condition2"
+        {S2R1}
     output:
         "AlternativeSplicing/localAS/Condition2"
     shell：
