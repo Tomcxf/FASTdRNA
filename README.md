@@ -46,3 +46,6 @@ To generate a officall report by snakemake, users can run
 snakemake --report report.html
 ```
 after pipeline finished.
+
+## Citation
+Chen X, Liu Y, Lv K, Wang M, Liu X, Li B. FASTdRNA: a workflow for the analysis of ONT direct RNA sequencing. Bioinform Adv. 2023 Jul 20;3(1):vbad099. doi: 10.1093/bioadv/vbad099. PMID: 37521311; PMCID: PMC10375421. [link](https://academic.oup.com/bioinformaticsadvances/article/3/1/vbad099/7227116)
