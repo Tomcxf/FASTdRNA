@@ -41,7 +41,7 @@ Finally, for the reason that copyright protection, we can't supply Guppy directl
 ```
 
 ### tips
-To generate a officall report by snakemake, users can run
+To generate a offical report by snakemake, users can run
 ```
 snakemake --report report.html
 ```
