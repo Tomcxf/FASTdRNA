@@ -21,7 +21,7 @@ rule generateEvents:
     output:
         "AlternativeSplicing/localAS"
     shell:
-        "mkdir AlternativeSplicing | mkdir AlternativeSplicing/localAS | suppa.py generateEvents -i {input} -o {output}/local -f ioe -e {SE,SS,MX,RI,FL}"
+        "mkdir AlternativeSplicing | mkdir AlternativeSplicing/localAS | suppa.py generateEvents -i {input} -o {output}/local -f ioe -e {{SE,SS,MX,RI,FL}}"
 
 rule generateEvents2:
     input:
@@ -29,7 +29,7 @@ rule generateEvents2:
     output:
         "AlternativeSplicing/localAS/allevents.ioe"
     shell:
-        "awk 'FNR==1 && NR!=1 { while (/^<header>/) getline; } 1 {print}' {input}/*.ioe > output[0]"
+        "awk 'FNR==1 && NR!=1 {{ while (/^<header>/) getline; }} 1 {{print}}' {input}/*.ioe > {output[0]}"
 
 #rule joinFilesCond1:
 #    input:
