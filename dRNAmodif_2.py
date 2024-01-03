@@ -26,7 +26,7 @@ rule sampcomp:
     params:
         {sample1},
         {sample2}
-    shell：
+    shell:
         "nanocompore sampcomp --file_list1 {input[0]} , {input[1]} --file_list2 {input[2]} , {input[3]} --label1 {params[0]} --label2 {params[1]} --fasta {input[4]} --outpath {output}"
 
 rule follow:

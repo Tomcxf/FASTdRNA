@@ -37,7 +37,7 @@ rule generateEvents2:
         #{S1R2}
 #    output:
 #        "AlternativeSplicing/localAS/Condition1"
-#    shell：
+#    shell:
 #        "suppa.py joinFiles -f tpm -i {input[0]} {input[1]} -o {output}"
 
 #rule joinFilesCond1:
@@ -46,7 +46,7 @@ rule generateEvents2:
 #        {S2R2}
 #    output:
 #        "AlternativeSplicing/localAS/Condition2"
-#    shell：
+#    shell:
 #        "suppa.py joinFiles -f tpm -i {input[0]} {input[1]} -o {output}"
 
 rule PSI_Con1:
@@ -76,7 +76,7 @@ rule PSI_Con2:
 #        "AlternativeSplicing/localAS/Condition2"
 #    output:
 #        "AlternativeSplicing/localAS/Con1vs2"
-#    shell： 
+#    shell: 
 #        "suppa.py diffSplice --method empirical --input {input[0]} --psi {input[1]}.psi {input[2]}.psi --tpm {input[3]}.tpm {input[4]}.tpm --area 1000 --lower-bound 0.05 -gc -o {output}"
 
 #rule cluster:

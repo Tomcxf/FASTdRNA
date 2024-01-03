@@ -20,7 +20,7 @@ rule slow5_f2s:
         "{fast5}"
     output:
         "{example}/analysis/slow5/midbolw5_dir"
-    shell：
+    shell:
         "slow5tools f2s {input} -d {output}  -p 8"
 
 rule slow5_merge:
