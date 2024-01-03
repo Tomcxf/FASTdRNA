@@ -21,15 +21,15 @@ rule generateEvents:
     output:
         "AlternativeSplicing/localAS"
     shell:
-        "mkdir AlternativeSplicing | mkdir AlternativeSplicing/localAS | suppa.py generateEvents -i {input} -o {output}/local -f ioe -e {SE,SS,MX,RI,FL}"
+        "mkdir AlternativeSplicing | mkdir AlternativeSplicing/localAS | suppa.py generateEvents -i {input} -o {output}/local -f ioe -e {{SE,SS,MX,RI,FL}}"
 
 rule generateEvents2:
     input:
         "AlternativeSplicing/localAS"
     output:
         "AlternativeSplicing/localAS/allevents.ioe"
-    shell：
-        "awk 'FNR==1 && NR!=1 { while (/^<header>/) getline; } 1 {print}' {input}/*.ioe > output[0]"
+    shell:
+        "awk 'FNR==1 && NR!=1 {{ while (/^<header>/) getline; }} 1 {{print}}' {input}/*.ioe > {output[0]}"
 
 #rule joinFilesCond1:
 #    input:
@@ -37,7 +37,7 @@ rule generateEvents2:
         #{S1R2}
 #    output:
 #        "AlternativeSplicing/localAS/Condition1"
-#    shell：
+#    shell:
 #        "suppa.py joinFiles -f tpm -i {input[0]} {input[1]} -o {output}"
 
 #rule joinFilesCond1:
@@ -46,7 +46,7 @@ rule generateEvents2:
 #        {S2R2}
 #    output:
 #        "AlternativeSplicing/localAS/Condition2"
-#    shell：
+#    shell:
 #        "suppa.py joinFiles -f tpm -i {input[0]} {input[1]} -o {output}"
 
 rule PSI_Con1:
@@ -55,7 +55,7 @@ rule PSI_Con1:
         {S1R1}
     output:
         "AlternativeSplicing/localAS/Condition1"
-    shell：
+    shell:
         "suppa.py psiPerEvent --ioe-file {input[0]} --expression-file {input[1]}.tpm -o {output}"
 
 rule PSI_Con2:
@@ -64,7 +64,7 @@ rule PSI_Con2:
         {S2R1}
     output:
         "AlternativeSplicing/localAS/Condition2"
-    shell：
+    shell:
         "suppa.py psiPerEvent --ioe-file {input[0]} --expression-file {input[1]}.tpm -o {output}"
 
 #rule diffsplice:
@@ -76,8 +76,8 @@ rule PSI_Con2:
 #        "AlternativeSplicing/localAS/Condition2"
 #    output:
 #        "AlternativeSplicing/localAS/Con1vs2"
-#    shell： 
-3        "suppa.py diffSplice --method empirical --input {input[0]} --psi {input[1]}.psi {input[2]}.psi --tpm {input[3]}.tpm {input[4]}.tpm --area 1000 --lower-bound 0.05 -gc -o {output}"
+#    shell: 
+#        "suppa.py diffSplice --method empirical --input {input[0]} --psi {input[1]}.psi {input[2]}.psi --tpm {input[3]}.tpm {input[4]}.tpm --area 1000 --lower-bound 0.05 -gc -o {output}"
 
 #rule cluster:
 #    input:

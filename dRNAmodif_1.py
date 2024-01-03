@@ -18,7 +18,7 @@ rule eventalign:
         "{ref}"
     output:
         expand("{example}/analysis/modification/{example}_eventalign.tsv",example=EXA)
-    shell：
+    shell:
         "nanopolish index {input[0]} --slow5 {input[1]}| nanopolish eventalign --reads {input[0]} --bam {input[2]}  --genome {input[3]} --print-read-names --scale-events --samples > {output}"
 
 
