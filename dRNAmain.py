@@ -10,7 +10,7 @@ configfile: "config.yaml"
 rule all :
     input:  
         expand("{example}/analysis/{example}.fastq",example=EXA),
-        expand("{example}/analysis/nanoplot",example=EXA)
+        expand("{example}/analysis/nanoplot",example=EXA),
         expand("{example}/analysis/mapping/{example}_transcript.bam",example=EXA),
         expand("{example}/analysis/count/{example}_transcript_counts.csv",example=EXA),
         expand("{example}/analysis/slow5/file.blow5",example=EXA)
