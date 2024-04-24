@@ -1,12 +1,12 @@
 # S1R1,S1R2,S2R1,S2R2 are the name of four project
-EXA={"S1R1","S1R2","S2R1","S2R2"}
-ref="RGF"
-fast5="fast"
-S1R1="location of S1R1"
-S1R2="location of S1R2"
-S2R1="location of S2R1"
-S2R2="location of S2R2"
+EXA:{"S1R1","S1R2","S2R1","S2R2"}
+ref:"RGF"
+fast5:"fast"
+S1R1:"location of S1R1"
+S1R2:"location of S1R2"
+S2R1:"location of S2R1"
+S2R2:"location of S2R2"
 ######sample is the name of different condition group
 ######for example, if your project is {S1R1,S1R2,S2R1,S2R2}, which R means duplication,sample will be S1 and S2
-sample1="condition1"
-sample2="condition2"
+sample1:"condition1"
+sample2:"condition2"
