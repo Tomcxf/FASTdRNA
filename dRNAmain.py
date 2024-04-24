@@ -7,6 +7,11 @@
 #fast5="fast"
 configfile: "config.yaml"
 #################################
+EXA = config["EXA"]
+cfgfile= config["cfgfile"]
+ref= config["ref"]
+fast5= config["fast5"]
+
 rule all :
     input:  
         expand("{example}/analysis/{example}.fastq",example=EXA),
