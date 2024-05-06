@@ -21,13 +21,14 @@ rule all :
         expand("./{example}/analysis/mapping/{example}_transcript.bam",example=EXA),
         expand("./{example}/analysis/count/{example}_transcript_counts.csv",example=EXA),
         expand("./{example}/analysis/slow5/file.blow5",example=EXA)
+       # expand("./{example}/analysis/slow5/file.slow5.idx",example=EXA)
 
 rule slow5_f2s:
     input:
         expand("{fast5}",fast5=fast5)
     output:
         directory("./{example}/analysis/slow5/midbolw5_dir")
-    threads: 16
+    threads: 8
     benchmark:
         "./{example}/analysis/benchmark/slow5_f2s.txt"
     shell:
@@ -38,7 +39,7 @@ rule slow5_merge:
         directory("./{example}/analysis/slow5/midbolw5_dir")
     output:
         "./{example}/analysis/slow5/file.blow5"
-    threads: 16
+    threads: 8
     benchmark:
         "./{example}/analysis/benchmark/slow5_merge.txt"
     shell:
@@ -50,7 +51,7 @@ rule slow5_split:
         "./{example}/analysis/slow5/file.blow5"
     output:
         directory("./{example}/analysis/slow5/bolw5_dir")
-    threads: 16
+    threads: 8
     benchmark:
         "./{example}/analysis/benchmark/slow5_split.txt"
     shell:
@@ -61,7 +62,7 @@ rule slow5_convert:
         directory("./{example}/analysis/slow5/bolw5_dir")
     output:
         directory("./{example}/analysis/fast5")
-    threads: 16
+    threads: 8
     benchmark:
         "./{example}/analysis/benchmark/slow5_convert.txt"
     shell:
@@ -74,18 +75,20 @@ rule basecall:
         expand("{cfg}",cfg=cfgfile)
     output:
         directory("./{example}/analysis/basecall")
-    threads: 16
+   # threads: 8
     benchmark:
         "./{example}/analysis/benchmark/basecall.txt"
+    params:
+        "cuda:0"
     shell:
-        "guppy_basecaller -c {input[1]} -i {input[0]} -s {output}"
+        "/home/chenxf/tools/ont-guppy/bin/guppy_basecaller -c {input[1]} -i {input[0]} -s {output} --num_callers 8  -x {params} --chunks_per_runner 1  --chunk_size 1000"
 
 rule Fastq data management:
     input:
         "./{example}/analysis/basecall"
     output:
         "./{example}/analysis/{example}.fastq"
-    threads: 16
+    threads: 8
     benchmark:
         "./{example}/analysis/benchmark/pyBiotools.txt"
     shell:
@@ -96,7 +99,7 @@ rule nanoplot_visual:
         "./{example}/analysis/basecall"
     output:
         directory("./{example}/analysis/nanoplot")
-    threads: 16
+    threads: 8
     benchmark:
         "./{example}/analysis/benchmark/nanoplot.txt"
     shell:
@@ -108,7 +111,7 @@ rule mapping:
         "./{example}/analysis/{example}.fastq"
     output:
         "./{example}/analysis/mapping/{example}_transcript.sam"
-    threads: 16
+    threads: 8
     benchmark:
         "./{example}/analysis/benchmark/mapping.txt"
     shell:
@@ -119,19 +122,39 @@ rule sam_sort:
         "./{example}/analysis/mapping/{example}_transcript.sam"
     output:
         "./{example}/analysis/mapping/{example}_transcript.bam"
-    threads: 16
+    threads: 8
     benchmark:
         "./{example}/analysis/benchmark/samtools.txt"
     shell:
         "samtools sort -@ 4 -O bam -o {output} {input}"
+rule samtools_index:
+    input:
+        "./{example}/analysis/mapping/{example}_transcript.bam"
+    output:
+        "./{example}/analysis/mapping/{example}_transcript.bam.bai"
+    shell:
+        "samtools index {input}"
 
 rule transcript_count:
     input:
         "./{example}/analysis/mapping/{example}_transcript.bam"
     output:
         "./{example}/analysis/count/{example}_transcript_counts.csv"
-    threads: 16
+    threads: 8
     benchmark:
         "./{example}/analysis/benchmark/nanocount.txt"
     shell:
         "NanoCount -i {input} -o {output}"
+
+#rule slow_index:
+#    input:
+#        expand("./{example}/analysis/{example}.fastq",example=EXA),
+#        expand("./{example}/analysis/slow5/file.blow5",example=EXA)
+#    output:
+#        "./{example}/analysis/slow5/file.slow5.idx"
+#    threads:8
+#    benchmark:
+#        "./{example}/analysis/polyA_estimate/slow5_index.txt"
+#    shell:
+#        "f5c_x86_64_linux_cuda index --slow5 {input[1]} {input[0]}"
+        

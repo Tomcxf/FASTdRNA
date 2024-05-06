@@ -14,13 +14,18 @@ fast5= config["fast5"]
 
 rule all:
     input:
-        expand("./{example}/analysis/polyA_estimate/polyA_estimate.tsv",example=EXA)
-
+        expand("./{example}/analysis/slow5/file.blow5.idx",example=EXA),
+#        expand("./{example}/analysis/polyA_estimate/polyA_estimate.pdf",example=EXA),
+        expand("./{example}/analysis/polyA_estimate/polyA_estimate.tsv",example=EXA),
+#        expand("./{example}/analysis/polyA_estimate/polyA_estimate.pdf",example=EXA),
+#        expand("./{example}/analysis/slow5/file.slow5.idx",example=EXA)
+        expand("./{example}/analysis/mapping/{example}_transcript.bam.bai",example=EXA),
+        expand("./{example}/analysis/{example}.fastq.index.readdb",example=EXA)
 rule samtools_index:
     input:
         expand("./{example}/analysis/mapping/{example}_transcript.bam",example=EXA)
     output:
-        expand("./{example}/analysis/mapping/{example}_transcript.bam.bai",example=EXA)
+        "./{example}/analysis/mapping/{example}_transcript.bam.bai"
     shell:
         "samtools index {input}"
 
@@ -29,21 +34,36 @@ rule slow_index:
         expand("./{example}/analysis/{example}.fastq",example=EXA),
         expand("./{example}/analysis/slow5/file.blow5",example=EXA)
     output:
-        "./{example}/analysis/slow5/file.slow5.idx"
-    threads:16
+        "./{example}/analysis/slow5/file.blow5.idx"
+    threads:8
     benchmark:
         "./{example}/analysis/polyA_estimate/slow5_index.txt"
     shell:
-        "/home/chenxf/tools/nanopolish index {input[0]} --slow5 {input[1]}"
+        "f5c_x86_64_linux_cuda index --slow5 {input[1]} {input[0]}"
+
+rule echo:
+    input:
+        expand("./{example}/analysis/slow5/file.blow5",example=EXA),
+        expand("./{example}/analysis/slow5/file.blow5.idx",example=EXA)
+    output:
+        "./{example}/analysis/{example}.fastq.index.readdb"
+    shell:
+        "echo -e \*\t{input[0]} | sed 's/ /\t/g' > {output}"
+
+#echo -e "*\t./WT-1/analysis/slow5/file.blow5" > ./WT-1/analysis/WT-1.fastq.index.readdb 
+
+
 
 rule polyA_estimate:
     input:
         expand("./{example}/analysis/{example}.fastq",example=EXA),
         expand("./{example}/analysis/mapping/{example}_transcript.bam",example=EXA),
-        expand("{ref}",ref=ref)
+        expand("{ref}",ref=ref),
+        expand("./{example}/analysis/slow5/file.blow5.idx",example=EXA),
+        expand("./{example}/analysis/{example}.fastq.index.readdb",example=EXA)
     output:
         "./{example}/analysis/polyA_estimate/polya_results.tsv"
-    threads:16
+    threads:8
     benchmark:
         "./{example}/analysis/polyA_estimate/polyA_estimate_record.txt"
     shell:
@@ -74,11 +94,11 @@ rule polyA_results:
     shell:
         "cat {input[0]} {input[1]} > {output}"
 
-rule R_drawing:
-    input:
-        "./{example}/analysis/polyA_estimate/polyA_estimate.tsv"
-    output:
-        "./{example}/analysis/polyA_estimate/polyA_estimate.pdf"
-    script:
-        "./Tail.R"
+#rule R_drawing:
+#    input:
+#        "./{example}/analysis/polyA_estimate/polyA_estimate.tsv"
+#    output:
+#        "./{example}/analysis/polyA_estimate/polyA_estimate.pdf"
+#    script:
+#        "./Tail.R"
 
