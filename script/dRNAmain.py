@@ -81,7 +81,7 @@ rule basecall:
     params:
         "cuda:0"
     shell:
-        "/home/chenxf/tools/ont-guppy/bin/guppy_basecaller -c {input[1]} -i {input[0]} -s {output} --num_callers 8  -x {params} --chunks_per_runner 1  --chunk_size 1000"
+        "guppy_basecaller -c {input[1]} -i {input[0]} -s {output} --num_callers 8  -x {params} --chunks_per_runner 1  --chunk_size 1000"
 
 rule Fastq data management:
     input:

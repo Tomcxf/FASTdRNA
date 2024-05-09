@@ -7,16 +7,16 @@
 #S2R2="S2R2"
 
 #ref="RGF"
-configfile: "configFormodif2.yaml"
+configfile: "./configForModifAS.yaml"
 
 #################################
 S1R1= config["S1R1"]
 S1R2= config["S1R2"]
 S2R1= config["S2R1"]
 S2R2= config["S2R2"]
-gtf= config["gtf"]
-samples= config["samples"]
+gtf= config["ref"]
 filetype = [".dpsi",".psivec"]
+import glob
 rule all:
     input:
         #"AlternativeSplicing/localAS/diff/Con1vs2.psivec",
@@ -30,12 +30,13 @@ rule generateEvents:
     params:
         "AlternativeSplicing/localAS/",
         #"\{SE,SS,MX,RI,FL\}"
-        "AlternativeSplicing/localAS/*.ioe"
+        #"AlternativeSplicing/localAS/*.ioe"
+	ioe_files=lambda wildcards: glob.glob("AlternativeSplicing/localAS/*.ioe")
     output:
         "AlternativeSplicing/localAS/allevents.ioe"
     shell:
         #"mkdir AlternativeSplicing | mkdir AlternativeSplicing/localAS | "
-        "suppa.py generateEvents -i {input} -o {params[0]} -f ioe -e {{SE,SS,MX,RI,FL}} -p | awk 'FNR==1 && NR!=1 {{ while (/^<header>/) getline; }} 1 {{print}}' {params[1]} > {output}"
+        "suppa.py generateEvents -i {input} -o {params[0]} -f ioe -e {{SE,SS,MX,RI,FL}} -p | awk 'FNR==1 && NR!=1 {{ while (/^<header>/) getline; }} 1 {{print}}' {params.ioe_files} > {output}"
 
 #rule generateEvents2:
 #    input:

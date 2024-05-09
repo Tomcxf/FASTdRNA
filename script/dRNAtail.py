@@ -67,7 +67,7 @@ rule polyA_estimate:
     benchmark:
         "./{example}/analysis/polyA_estimate/polyA_estimate_record.txt"
     shell:
-        "/home/chenxf/tools/nanopolish polya --reads {input[0]} --bam {input[1]} --genome {input[2]} > {output}"
+        "nanopolish polya --reads {input[0]} --bam {input[1]} --genome {input[2]} > {output}"
 rule polyA_mid_results_1:
     input:
         "./{example}/analysis/polyA_estimate/polya_results.tsv"

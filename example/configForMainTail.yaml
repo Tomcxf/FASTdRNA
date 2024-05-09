@@ -1,0 +1,4 @@
+EXA: "test3"
+cfgfile: "/home/chenxf/root/hdd/chencode/ont-guppy/data/rna_r9.4.1_70bps_fast.cfg"
+ref: "/home/chenxf/root/hdd/chencode/FastdRNA/transcriptome.fa"
+fast5: "/home/chenxf/root/hdd/chencode/FastdRNA/test3"

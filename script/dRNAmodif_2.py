@@ -8,7 +8,7 @@
 #ref="RGF"
 #sample1="111"
 #sample2="222"
-configfile: "./configFormodif2.yaml"
+configfile: "./configForModifAS.yaml"
 #################################
 S1R1= config["S1R1"]
 S1R2= config["S1R2"]
