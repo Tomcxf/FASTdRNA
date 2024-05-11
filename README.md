@@ -3,6 +3,8 @@
 
 FastdRNA is a pipeline written in snakemake to handle ONT direct RNA seq database. 
 
+<h2> We have published a handbook which includes more details, please read [FdRhandbook](https://tomcxf.github.io/jekyll-gitbook/) before using it!
+
 The analysis includes : 
 - dRNAmain: a module for basecalling. mapping and transcript count.
 - dRNAtail: a module for RNA poly(A) length estimate.
