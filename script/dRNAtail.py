@@ -48,7 +48,7 @@ rule echo:
     output:
         "./{example}/analysis/{example}.fastq.index.readdb"
     shell:
-        "echo -e \*\t{input[0]} | sed 's/ /\t/g' > {output}"
+        r"printf '*\t%s\n' {input[0]} > {output}"
 
 #echo -e "*\t./WT-1/analysis/slow5/file.blow5" > ./WT-1/analysis/WT-1.fastq.index.readdb 
 
@@ -75,7 +75,7 @@ rule polyA_mid_results_1:
         "./{example}/analysis/polyA_estimate/polya_results.pass_only.tsv",
         "./{example}/analysis/polyA_estimate/header.tsv"
     shell:
-        "grep 'PASS' {input} > {output[0]} | head -1 {input} > {output[1]}"
+        "grep 'PASS' {input} > {output[0]} ; head -1 {input} > {output[1]}"
 
 #rule polyA_mid_results_2:
 #    input:

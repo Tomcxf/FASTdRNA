@@ -112,7 +112,7 @@ rule mapping:
     benchmark:
         "./{example}/analysis/benchmark/mapping.txt"
     shell:
-        "minimap2 -ax map-ont -splice -uf -k14 -t 4 -p 0 -N 10 {input[0]} {input[1]} > {output}"
+        "minimap2 -ax map-ont -k14 -t 4 -p 0 -N 10 {input[0]} {input[1]} > {output}"
 
 rule sam_sort:
     input:
