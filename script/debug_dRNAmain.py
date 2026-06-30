@@ -80,7 +80,7 @@ rule basecall:
     shell:
         "guppy_basecaller -c {input[1]} -i {input[0]} -s {output}"
 
-rule Fastq data management:
+rule Fastq_data_management:
     input:
         "./{example}/analysis/basecall"
     output:

@@ -1,0 +1,27 @@
+# Snakemake
+.snakemake/
+*.snakemake.log
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Pipeline outputs / large data (do not commit results or raw data)
+*.fast5
+*.blow5
+*.slow5
+*.bam
+*.bam.bai
+*.sam
+*.fastq
+*.fastq.gz
+benchmark/
+analysis/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~

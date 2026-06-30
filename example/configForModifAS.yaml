@@ -1,6 +1,6 @@
 # S1R1,S1R2,S2R1,S2R2 are the name of four project
 EXA:    {"test1","test2","test3","test4"}
-ref:    "/home/chenxf/root/hdd/chencode/FastdRNA/iwgsc_refseqv2.1_annotation_200916.gtf"
+ref:    "/path/to/annotation.gtf"
 #fast5:"fast"
 S1R1:   "test1"
 S1R2:   "test2"

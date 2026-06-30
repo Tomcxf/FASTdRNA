@@ -22,7 +22,7 @@ git clone https://github.com/Tomcxf/FASTdRNA.git
 Required software and relative dependence can be installed through conda by typing
 
 ```
-conda env create -f environmentMain.yaml
+conda env create -f environment.yml
 ```
 
 There're two software need to install in binary file.
@@ -35,8 +35,13 @@ Finally, for the reason that copyright protection, we can't supply Guppy directl
 
 ## Usage
 
+All workflow files and config templates live in `script/`, so run the
+commands from inside that folder (the config path is resolved relative to
+the working directory):
+
 ```
- snakemake -s {dRNAmain.py / dRNAtail.py / dRNAmodif.py / dRNAas.py}
+ cd script
+ snakemake -s {dRNAmain.py / dRNAtail.py / dRNAmodif_1.py / dRNAmodif_2.py / dRNAas.py}
            -s the snakemake file you want to run
            --cores / -c : the number of cores to use (necessary)
            --set-threads myrule=XXX set threads XXX for running

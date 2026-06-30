@@ -260,4 +260,3 @@ dependencies:
   - zlib=1.2.13=h166bdaf_4
   - zstandard=0.18.0=py37h540881e_0
   - zstd=1.5.2=h3eb15da_6
-prefix: /home/chenxf/miniconda3/envs/FdR
