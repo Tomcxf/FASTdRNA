@@ -1,143 +1,109 @@
 ##################################
 # A pipeline for ONT_dRNA_seq written by Chen X.F
+# Alternative-splicing module (SUPPA2)
 ##################################
-#S1R1="S1R1"
-#S1R2="S1R2"
-#S2R1="S2R1"
-#S2R2="S2R2"
-
-#ref="RGF"
 configfile: "./configForModifAS.yaml"
 
 #################################
-S1R1= config["S1R1"]
-S1R2= config["S1R2"]
-S2R1= config["S2R1"]
-S2R2= config["S2R2"]
-gtf= config["ref"]
-filetype = [".dpsi",".psivec"]
-import glob
+# Configuration
+#   ref        : GTF annotation used by suppa generateEvents
+#   conditions : {condition_name: [replicate_sample, ...]}
+#                replicate sample names must match the project names (EXA)
+#                produced by dRNAmain. Add conditions/replicates here only;
+#                the rules below adapt automatically.
+#################################
+GTF = config["ref"]
+CONDITIONS = config["conditions"]
+COND_NAMES = list(CONDITIONS.keys())
+
+# SUPPA diffSplice compares exactly two conditions.
+if len(COND_NAMES) != 2:
+    raise ValueError(
+        "dRNAas diffSplice compares exactly two conditions, but config "
+        "'conditions' has %d: %s" % (len(COND_NAMES), COND_NAMES)
+    )
+COND1, COND2 = COND_NAMES
+COMPARISON = "%svs%s" % (COND1, COND2)
+
+AS_DIR = "AlternativeSplicing/localAS"
+
+wildcard_constraints:
+    sample = r"[^/]+",
+    condition = r"[^/]+"
+
+
+def condition_tpm(wildcards):
+    """All replicate .tpm files belonging to one condition."""
+    return [
+        "%s/analysis/count/%s_transcript_counts.tpm" % (s, s)
+        for s in CONDITIONS[wildcards.condition]
+    ]
+
+
 rule all:
     input:
-        #"AlternativeSplicing/localAS/diff/Con1vs2.psivec",
-        #"AlternativeSplicing/localAS/diff/Con1vs2.dpsi"
-        #"AlternativeSplicing/localAS/allevents.ioe"
-        #directory("AlternativeSplicing/localAS/diff/")
-        expand("./Con1vs2{ft}",ft = filetype)
+        multiext(COMPARISON, ".dpsi", ".psivec")
+
+# Generate all AS events from the annotation and merge them into one ioe.
 rule generateEvents:
     input:
-        expand("{gtf}",gtf=gtf) 
+        GTF
+    output:
+        AS_DIR + "/allevents.ioe"
     params:
-        "AlternativeSplicing/localAS/",
-        #"\{SE,SS,MX,RI,FL\}"
-        #"AlternativeSplicing/localAS/*.ioe"
-        ioe_files=lambda wildcards: glob.glob("AlternativeSplicing/localAS/*.ioe")
-    output:
-        "AlternativeSplicing/localAS/allevents.ioe"
+        prefix = AS_DIR + "/events"
     shell:
-        #"mkdir AlternativeSplicing | mkdir AlternativeSplicing/localAS | "
-        "suppa.py generateEvents -i {input} -o {params[0]} -f ioe -e {{SE,SS,MX,RI,FL}} -p | awk 'FNR==1 && NR!=1 {{ while (/^<header>/) getline; }} 1 {{print}}' {params.ioe_files} > {output}"
+        "suppa.py generateEvents -i {input} -o {params.prefix} -f ioe -e SE SS MX RI FL -p && "
+        "awk 'FNR==1 && NR!=1 {{ while (/^<header>/) getline; }} 1' {params.prefix}*.ioe > {output}"
 
-#rule generateEvents2:
-#    input:
-#        "AlternativeSplicing/localAS/*.ioe"
-#    output:
-#        "AlternativeSplicing/localAS/allevents.ioe"
-#    shell:
-#        "awk 'FNR==1 && NR!=1 {{ while (/^<header>/) getline; }} 1 {print}' {input} > {output}"
-
-rule extractTpm:
+# One rule for every replicate: counts -> TPM (handles all samples).
+rule extract_tpm:
     input:
-        expand("./{S1R1}/analysis/count/{S1R1}_transcript_counts.csv",S1R1=S1R1)
+        "{sample}/analysis/count/{sample}_transcript_counts.csv"
     output:
-        expand("./{S1R1}/analysis/count/{S1R1}_transcript_counts.tpm",S1R1=S1R1)
+        "{sample}/analysis/count/{sample}_transcript_counts.tpm"
     shell:
         "cut -f 1,4 {input} > {output}"
 
-rule extractTpm2:
+# One rule for every condition: join its replicate TPMs.
+rule join_tpm:
     input:
-        expand("./{S1R2}/analysis/count/{S1R2}_transcript_counts.csv",S1R2=S1R2)
+        condition_tpm
     output:
-        expand("./{S1R2}/analysis/count/{S1R2}_transcript_counts.tpm",S1R2=S1R2)
-    shell:
-        "cut -f 1,4 {input} > {output}"
-
-rule extractTpm3:
-    input:
-        expand("./{S2R1}/analysis/count/{S2R1}_transcript_counts.csv",S2R1=S2R1)
-    output:
-        expand("./{S2R1}/analysis/count/{S2R1}_transcript_counts.tpm",S2R1=S2R1)
-    shell:
-        "cut -f 1,4 {input} > {output}"
-
-rule extractTpm4:
-    input:
-        expand("./{S2R2}/analysis/count/{S2R2}_transcript_counts.csv",S2R2=S2R2)
-    output:
-        expand("./{S2R2}/analysis/count/{S2R2}_transcript_counts.tpm",S2R2=S2R2)
-    shell:
-        "cut -f 1,4 {input} > {output}"
-
-
-rule joinFilesCond1:
-    input:
-        expand("./{S1R1}/analysis/count/{S1R1}_transcript_counts.tpm",S1R1=S1R1),
-        expand("./{S1R2}/analysis/count/{S1R2}_transcript_counts.tpm",S1R2=S1R2)
+        AS_DIR + "/{condition}.tpm"
     params:
-        "AlternativeSplicing/localAS/Condition1"
-    output:
-        "AlternativeSplicing/localAS/Condition1.tpm"
+        prefix = AS_DIR + "/{condition}"
     shell:
-        "suppa.py joinFiles -f tpm -i {input[0]} {input[1]} -o {params}"
+        "suppa.py joinFiles -f tpm -i {input} -o {params.prefix}"
 
-rule joinFilesCond2:
+# One rule for every condition: per-event PSI.
+rule psi_per_event:
     input:
-        expand("./{S2R1}/analysis/count/{S2R1}_transcript_counts.tpm",S2R1=S2R1),
-        expand("./{S2R2}/analysis/count/{S2R2}_transcript_counts.tpm",S2R2=S2R2)
-    params:
-        "AlternativeSplicing/localAS/Condition2"
+        ioe = AS_DIR + "/allevents.ioe",
+        tpm = AS_DIR + "/{condition}.tpm"
     output:
-        "AlternativeSplicing/localAS/Condition2.tpm"
-    shell:
-        "suppa.py joinFiles -f tpm -i {input[0]} {input[1]} -o {params}"
-
-rule PSI_Con1:
-    input:
-        "AlternativeSplicing/localAS/allevents.ioe",
-        "AlternativeSplicing/localAS/Condition1.tpm"
+        AS_DIR + "/{condition}.psi"
     params:
-        "AlternativeSplicing/localAS/Condition1"
-    output:
-        "AlternativeSplicing/localAS/Condition1.psi"
+        prefix = AS_DIR + "/{condition}"
     shell:
-        "suppa.py psiPerEvent --ioe-file {input[0]} --expression-file {input[1]} -o {params}"
+        "suppa.py psiPerEvent --ioe-file {input.ioe} --expression-file {input.tpm} -o {params.prefix}"
 
-rule PSI_Con2:
-    input:
-        "AlternativeSplicing/localAS/allevents.ioe",
-        "AlternativeSplicing/localAS/Condition2.tpm"
-    params:
-        "AlternativeSplicing/localAS/Condition2"
-    output:
-        "AlternativeSplicing/localAS/Condition2.psi"
-    shell:
-        "suppa.py psiPerEvent --ioe-file {input[0]} --expression-file {input[1]} -o {params}"
-
+# Differential splicing between the two conditions.
 rule diffsplice:
     input:
-        "AlternativeSplicing/localAS/allevents.ioe",
-        "AlternativeSplicing/localAS/Condition1.psi",
-        "AlternativeSplicing/localAS/Condition2.psi",
-        "AlternativeSplicing/localAS/Condition1.tpm",
-        "AlternativeSplicing/localAS/Condition2.tpm"
-    params:
-        "Con1vs2"
+        ioe = AS_DIR + "/allevents.ioe",
+        psi1 = AS_DIR + "/" + COND1 + ".psi",
+        psi2 = AS_DIR + "/" + COND2 + ".psi",
+        tpm1 = AS_DIR + "/" + COND1 + ".tpm",
+        tpm2 = AS_DIR + "/" + COND2 + ".tpm"
     output:
-        #"AlternativeSplicing/localAS/diff/Con1vs2.dpsi",
-        #"AlternativeSplicing/localAS/diff/Con1vs2.psivec"
-        multiext("./Con1vs2",".dpsi",".psivec")
-    shell: 
-        "suppa.py diffSplice --method empirical --input {input[0]} --psi {input[1]} {input[2]} --tpm {input[3]} {input[4]} --area 1000 --lower-bound 0.05 -gc -o {params}"
+        multiext(COMPARISON, ".dpsi", ".psivec")
+    params:
+        prefix = COMPARISON
+    shell:
+        "suppa.py diffSplice --method empirical --input {input.ioe} "
+        "--psi {input.psi1} {input.psi2} --tpm {input.tpm1} {input.tpm2} "
+        "--area 1000 --lower-bound 0.05 -gc -o {params.prefix}"
 
 #rule cluster:
 #    input:
@@ -146,13 +112,4 @@ rule diffsplice:
 #    output:
 #        "AlternativeSplicing/localAS/cluster"
 #    shell:
-#        "suppa.py clusterEvents --dpsi {input[0]} --psivec {input[1]} --sig-threshold 0.1 --eps 0.1 --min-pts 20 --groups 1-2,3-4 -o <output-file>" 
-
-#rule trans_gE:
-#    input:
-#        {ref}
-#    output:
-#        "AlternativeSplicing/transcript"
-#    shell:
-#        "mkdir AlternativeSplicing/transcript | suppa.py generateEvents -i {input} -o {output}/local -f ioe -e {SE,SS,MX,RI,FL}"
-
+#        "suppa.py clusterEvents --dpsi {input[0]} --psivec {input[1]} --sig-threshold 0.1 --eps 0.1 --min-pts 20 --groups 1-2,3-4 -o <output-file>"
