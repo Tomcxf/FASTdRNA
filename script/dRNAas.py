@@ -31,7 +31,7 @@ rule generateEvents:
         "AlternativeSplicing/localAS/",
         #"\{SE,SS,MX,RI,FL\}"
         #"AlternativeSplicing/localAS/*.ioe"
-	ioe_files=lambda wildcards: glob.glob("AlternativeSplicing/localAS/*.ioe")
+        ioe_files=lambda wildcards: glob.glob("AlternativeSplicing/localAS/*.ioe")
     output:
         "AlternativeSplicing/localAS/allevents.ioe"
     shell:

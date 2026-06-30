@@ -12,7 +12,7 @@ fast5= config["fast5"]
 #################################
 rule all:
     input:
-        directory(expand("{example}/analysis/modification/{example}_collapsed",example=EXA))
+        expand("{example}/analysis/modification/{example}_collapsed",example=EXA)
 
 
 rule slow_index:

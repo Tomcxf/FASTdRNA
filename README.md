@@ -22,7 +22,7 @@ git clone https://github.com/Tomcxf/FASTdRNA.git
 Required software and relative dependence can be installed through conda by typing
 
 ```
-conda env create -f environment.yml
+conda env create -f environmentMain.yaml
 ```
 
 There're two software need to install in binary file.
