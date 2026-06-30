@@ -1,28 +1,18 @@
 # =============================================================
-# Config shared by dRNAmodif_1/_2 (modification) and dRNAas (splicing)
+# Config shared by dRNAas (splicing) and dRNAmodif_2 (modification)
 # =============================================================
 
-# Reference used by both modules:
-#   - dRNAas       : as the GTF annotation (suppa generateEvents)
-#   - dRNAmodif_2  : as the transcriptome FASTA (nanocompore)
-ref: "location of GTF file"
+# GTF annotation -- used by dRNAas (suppa generateEvents)
+gtf: "location of GTF file"
 
-# ---- dRNAas : alternative splicing ----------------------------
-# Map each condition to its list of replicate sample names.
+# Transcriptome FASTA -- used by dRNAmodif_2 (nanocompore sampcomp)
+fasta: "location of transcriptome fasta"
+
+# Conditions -> replicate sample names (shared by both modules).
 # Sample names must match the project names (EXA) used in dRNAmain.
-# To add a condition or a replicate, edit only this block -- the rules
-# in dRNAas.py adapt automatically. diffSplice compares exactly two
-# conditions.
+# To add a condition or a replicate, edit only this block -- the rules in
+# dRNAas.py and dRNAmodif_2.py adapt automatically.
+# NOTE: both diffSplice and sampcomp compare exactly two conditions.
 conditions:
   condition1: ["S1R1", "S1R2"]
   condition2: ["S2R1", "S2R2"]
-
-# ---- dRNAmodif_2 : RNA modification (nanocompore) -------------
-# Legacy flat keys, still consumed by dRNAmodif_2.py.
-# sample1/sample2 are the two condition labels.
-S1R1: "location of S1R1"
-S1R2: "location of S1R2"
-S2R1: "location of S2R1"
-S2R2: "location of S2R2"
-sample1: "condition1"
-sample2: "condition2"

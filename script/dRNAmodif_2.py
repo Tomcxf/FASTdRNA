@@ -1,55 +1,74 @@
 ##################################
 # A pipeline for ONT_dRNA_seq written by Chen X.F
+# RNA modification module (Nanocompore sampcomp)
 ##################################
-#S1R1="AAA"
-#S1R2="BBB"
-#S2R1="CCC"
-#S2R2="DDD"
-#ref="RGF"
-#sample1="111"
-#sample2="222"
 configfile: "./configForModifAS.yaml"
+
 #################################
-S1R1= config["S1R1"]
-S1R2= config["S1R2"]
-S2R1= config["S2R1"]
-S2R2= config["S2R2"]
-ref= config["ref"]
-sample1= config["sample1"]
-sample2= config["sample2"]
+# Configuration
+#   fasta      : transcriptome FASTA used by nanocompore (--fasta)
+#   conditions : {condition_name: [replicate_sample, ...]}
+#                replicate sample names must match the project names (EXA)
+#                produced by dRNAmain / collapsed by dRNAmodif_1.
+#################################
+FASTA = config["fasta"]
+CONDITIONS = config["conditions"]
+COND_NAMES = list(CONDITIONS.keys())
+
+# Nanocompore sampcomp compares exactly two conditions.
+if len(COND_NAMES) != 2:
+    raise ValueError(
+        "dRNAmodif_2 sampcomp compares exactly two conditions, but config "
+        "'conditions' has %d: %s" % (len(COND_NAMES), COND_NAMES)
+    )
+COND1, COND2 = COND_NAMES
+
+
+def collapse_tsv(sample):
+    """Collapsed eventalign produced by dRNAmodif_1 for one sample."""
+    return ("%s/analysis/modification/%s_collapsed/"
+            "out_eventalign_collapse.tsv" % (sample, sample))
+
+
+def condition_collapse(condition):
+    return [collapse_tsv(s) for s in CONDITIONS[condition]]
+
 
 rule all:
     input:
-        "./modification/results/simulated_report.tsv",
-        "./modification/results/simulated_shift.tsv",
-        #"./modification/results/simulated_sig_positions.bed"
+        "modification/results/simulated_report.tsv",
+        "modification/results/simulated_shift.tsv"
+
+# Compare modification signal between the two conditions.
+# file_list1/2 accept any number of replicates (comma-separated).
 rule sampcomp:
     input:
-        expand("./{Sa1Re1}/analysis/modification/WT1_collapsed/out_eventalign_collapse.tsv",Sa1Re1=S1R1),
-        expand("./{Sa1Re2}/analysis/modification/WT2_collapsed/out_eventalign_collapse.tsv",Sa1Re2=S1R2),
-        expand("./{Sa2Re1}/analysis/modification/{Sa2Re1}_collapsed/out_eventalign_collapse.tsv",Sa2Re1=S2R1),
-        expand("./{Sa2Re2}/analysis/modification/{Sa2Re2}_collapsed/out_eventalign_collapse.tsv",Sa2Re2=S2R2),
-        expand("{ref}",ref=ref)
+        cond1 = condition_collapse(COND1),
+        cond2 = condition_collapse(COND2),
+        fasta = FASTA
     output:
-        directory("./modification/sampcomp"),
-        #"./modification/sampcomp/simulated_SampComp.db"
+        directory("modification/sampcomp")
     params:
-        {sample1},
-        {sample2}
-    threads:
-        8
+        label1 = COND1,
+        label2 = COND2,
+        file_list1 = lambda wildcards, input: ",".join(input.cond1),
+        file_list2 = lambda wildcards, input: ",".join(input.cond2)
+    threads: 8
     shell:
-        "nanocompore sampcomp --file_list1 {input[0]},{input[1]} --file_list2 {input[2]},{input[3]} --label1 {params[0]} --label2 {params[1]} --fasta {input[4]} --outpath {output[0]} --overwrite -t 8"
+        "nanocompore sampcomp "
+        "--file_list1 {params.file_list1} --file_list2 {params.file_list2} "
+        "--label1 {params.label1} --label2 {params.label2} "
+        "--fasta {input.fasta} --outpath {output} --overwrite -t {threads}"
 
+# Turn the SampComp database into a report + per-condition shift statistics.
 rule follow:
     input:
-        "./modification/sampcomp/",
-        expand("{ref}",ref=ref)
+        sampcomp = "modification/sampcomp",
+        fasta = FASTA
     output:
-        "./modification/results/simulated_report.tsv",
-        "./modification/results/simulated_shift.tsv",
-        #"./modification/results/simulated_sig_positions.bed"
+        "modification/results/simulated_report.tsv",
+        "modification/results/simulated_shift.tsv"
     params:
-        "./modification/sampcomp/outSampComp.db"
+        db = "modification/sampcomp/outSampComp.db"
     script:
-        "./modification.py"
+        "modification.py"

@@ -6,13 +6,13 @@ configfile: "./configForModifAS.yaml"
 
 #################################
 # Configuration
-#   ref        : GTF annotation used by suppa generateEvents
+#   gtf        : GTF annotation used by suppa generateEvents
 #   conditions : {condition_name: [replicate_sample, ...]}
 #                replicate sample names must match the project names (EXA)
 #                produced by dRNAmain. Add conditions/replicates here only;
 #                the rules below adapt automatically.
 #################################
-GTF = config["ref"]
+GTF = config["gtf"]
 CONDITIONS = config["conditions"]
 COND_NAMES = list(CONDITIONS.keys())
 

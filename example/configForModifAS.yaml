@@ -1,20 +1,15 @@
 # =============================================================
-# Example config for dRNAmodif_1/_2 (modification) and dRNAas (splicing)
+# Example config for dRNAas (splicing) and dRNAmodif_2 (modification)
 # =============================================================
 
-ref: "/path/to/annotation.gtf"
+# GTF annotation -- used by dRNAas (suppa generateEvents)
+gtf: "/path/to/annotation.gtf"
 
-# ---- dRNAas : alternative splicing ----------------------------
+# Transcriptome FASTA -- used by dRNAmodif_2 (nanocompore sampcomp)
+fasta: "/path/to/transcriptome.fa"
+
 # Each condition lists its replicate sample names (the EXA names from
 # dRNAmain). Replicate counts may differ between conditions.
 conditions:
   condition1: ["test1", "test2"]
   condition2: ["test3", "test4"]
-
-# ---- dRNAmodif_2 : RNA modification (nanocompore) -------------
-S1R1: "test1"
-S1R2: "test2"
-S2R1: "test3"
-S2R2: "test4"
-sample1: "condition1"
-sample2: "condition2"
